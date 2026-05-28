@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Globe, Moon, Sun } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -13,18 +12,10 @@ import {
 import { cn } from "@/lib/utils";
 
 export function Header() {
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window === "undefined") return "light";
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  });
-
   function toggleTheme() {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-    localStorage.setItem("theme", nextTheme);
-    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+    const root = document.documentElement;
+    const isDark = root.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
   }
 
   return (
@@ -76,11 +67,8 @@ export function Header() {
             aria-label="Toggle theme"
             title="Toggle theme"
           >
-            {theme === "dark" ? (
-              <Sun className="size-4" />
-            ) : (
-              <Moon className="size-4" />
-            )}
+            <Sun className="hidden size-4 dark:block" />
+            <Moon className="size-4 dark:hidden" />
           </button>
           <Globe className="size-4 text-foreground/80" />
         </div>
