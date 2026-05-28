@@ -6,6 +6,7 @@ import {
   getYoutubeVideoInfo,
   normalizeFileTitle,
 } from "@/lib/download/video";
+import { mapYtdlpError } from "@/lib/download/youtube/errors";
 import { isDirectHostAllowed } from "@/lib/security/allowed-hosts";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { RequestTimeoutError, withTimeout } from "@/lib/utils/errors";
@@ -98,11 +99,9 @@ export async function POST(request: Request) {
       }
 
       console.error("video/info youtube metadata error:", error);
-      return fail(
-        "DOWNLOAD_FAILED",
-        "Could not read media metadata from this source. Please check the link and try again.",
-        502
-      );
+      const mapped = mapYtdlpError(error);
+      const status = mapped.code === "UNSUPPORTED_SOURCE" ? 422 : mapped.code === "INVALID_URL" ? 400 : 502;
+      return fail(mapped.code, mapped.message, status);
     }
   } else {
     if (!isDirectHostAllowed(parsedUrl.hostname)) {

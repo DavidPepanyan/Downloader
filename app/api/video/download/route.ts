@@ -7,8 +7,9 @@ import {
   detectVideoSource,
   getFileExtension,
   normalizeFileTitle,
-  resolveYoutubeDownload,
+  resolveYoutubeDownloadStream,
 } from "@/lib/download/video";
+import { mapYtdlpError } from "@/lib/download/youtube/errors";
 import { isDirectHostAllowed } from "@/lib/security/allowed-hosts";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { RequestTimeoutError, withTimeout } from "@/lib/utils/errors";
@@ -104,7 +105,7 @@ export async function POST(request: Request) {
     }
 
     const { stream, fileExtension } = await withTimeout(
-      resolveYoutubeDownload(parsedUrl.toString(), body.format, body.quality),
+      resolveYoutubeDownloadStream(parsedUrl.toString(), body.format, body.quality),
       ENV.requestTimeoutMs,
       "Download initialization timed out."
     );
@@ -128,11 +129,9 @@ export async function POST(request: Request) {
     }
 
     console.error("video/download youtube error:", error);
-    return fail(
-      "DOWNLOAD_FAILED",
-      "Could not start download for this source. Please check the link and try again.",
-      502
-    );
+    const mapped = mapYtdlpError(error);
+    const status = mapped.code === "UNSUPPORTED_SOURCE" ? 422 : mapped.code === "INVALID_URL" ? 400 : 502;
+    return fail(mapped.code, mapped.message, status);
   }
 }
 

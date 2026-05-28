@@ -6,10 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "setup:ytdlp": "node node_modules/@distube/yt-dlp/script/download.js"
   },
   "dependencies": {
-    "@distube/ytdl-core": "^4.16.12",
+    "@distube/yt-dlp": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",

@@ -23,4 +23,5 @@ export const ENV = {
     LIMITS.rateLimitMaxRequests
   ),
   allowedHosts: parseAllowedHosts(process.env.ALLOWED_HOSTS),
+  ytdlpPath: process.env.YTDLP_PATH?.trim() || "",
 } as const;
