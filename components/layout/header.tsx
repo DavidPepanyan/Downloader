@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Globe, Moon, Sun } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -45,27 +51,26 @@ export function Header() {
             <span className="text-lg font-semibold tracking-tight">Downloader</span>
           </Link>
 
-          <div className="relative">
-            <details>
-              <summary
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
                 className={cn(
                   buttonVariants({ variant: "ghost", size: "sm" }),
-                  "h-8 cursor-pointer list-none gap-1 px-2 text-sm font-medium text-foreground marker:content-none hover:text-foreground"
+                  "h-8 gap-1 px-2 text-sm font-medium text-foreground hover:text-foreground"
                 )}
               >
                 More
                 <ChevronDown className="size-4" />
-              </summary>
-              <div className="absolute left-0 z-50 mt-2 w-48 rounded-xl border bg-card p-2 shadow-md">
-                <Link
-                  href="/privacy"
-                  className="block rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
-                >
-                  Privacy Policy
-                </Link>
-              </div>
-            </details>
-          </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link href="/privacy">Privacy Policy</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex items-center gap-3">

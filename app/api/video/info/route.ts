@@ -1,29 +1,13 @@
 import { NextResponse } from "next/server";
 
+import {
+  detectVideoSource,
+  getFileExtension,
+  getYoutubeVideoInfo,
+  normalizeFileTitle,
+} from "@/lib/download/video";
 import type { ApiResponse } from "@/types/api";
-import type { VideoFormat, VideoInfoData, VideoInfoRequest } from "@/types/video";
-
-const VIDEO_EXTENSIONS = new Set<VideoFormat>(["mp4", "webm", "mp3"]);
-
-function getFileExtensionFromPath(pathname: string): string | null {
-  const parts = pathname.split(".");
-  if (parts.length < 2) return null;
-
-  const ext = parts[parts.length - 1]?.toLowerCase() ?? "";
-  return ext || null;
-}
-
-function normalizeFileTitle(pathname: string): string {
-  const fallbackTitle = "media-file";
-  const rawName = pathname.split("/").pop();
-  if (!rawName) return fallbackTitle;
-
-  try {
-    return decodeURIComponent(rawName);
-  } catch {
-    return rawName;
-  }
-}
+import type { VideoInfoData, VideoInfoRequest } from "@/types/video";
 
 export async function POST(request: Request) {
   let body: VideoInfoRequest;
@@ -66,30 +50,69 @@ export async function POST(request: Request) {
     return NextResponse.json(response, { status: 400 });
   }
 
-  const extension = getFileExtensionFromPath(parsedUrl.pathname);
-  const isSupportedDirectMedia = extension ? VIDEO_EXTENSIONS.has(extension as VideoFormat) : false;
-
-  if (!isSupportedDirectMedia) {
+  const sourceType = detectVideoSource(parsedUrl);
+  if (!sourceType) {
     const response: ApiResponse<never> = {
       ok: false,
       error: {
-        code: "UNSUPPORTED_FORMAT",
-        message: "Only direct mp4/webm/mp3 links are supported in MVP.",
+        code: "UNSUPPORTED_SOURCE",
+        message:
+          "This URL is not supported. Use a YouTube link or a direct MP4/WEBM/MP3 media URL.",
       },
     };
     return NextResponse.json(response, { status: 422 });
   }
 
-  const data: VideoInfoData = {
-    title: normalizeFileTitle(parsedUrl.pathname),
-    sourceUrl: parsedUrl.toString(),
-    sourceHost: parsedUrl.hostname,
-    sourceExtension: extension,
-    thumbnailUrl: null,
-    durationSec: null,
-    availableFormats: [extension as VideoFormat],
-    availableQualities: ["source"],
-  };
+  let data: VideoInfoData;
+  if (sourceType === "youtube") {
+    try {
+      const ytInfo = await getYoutubeVideoInfo(parsedUrl.toString());
+      data = {
+        sourceType,
+        title: ytInfo.title,
+        sourceUrl: parsedUrl.toString(),
+        sourceHost: parsedUrl.hostname,
+        sourceExtension: null,
+        thumbnailUrl: ytInfo.thumbnailUrl,
+        durationSec: ytInfo.durationSec,
+        availableFormats: ytInfo.availableFormats,
+        availableQualities: ytInfo.availableQualities,
+      };
+    } catch {
+      const response: ApiResponse<never> = {
+        ok: false,
+        error: {
+          code: "DOWNLOAD_FAILED",
+          message: "Failed to read YouTube video metadata.",
+        },
+      };
+      return NextResponse.json(response, { status: 502 });
+    }
+  } else {
+    const extension = getFileExtension(parsedUrl.pathname);
+    if (!extension) {
+      const response: ApiResponse<never> = {
+        ok: false,
+        error: {
+          code: "UNSUPPORTED_FORMAT",
+          message: "Direct links must end with .mp4, .webm, or .mp3",
+        },
+      };
+      return NextResponse.json(response, { status: 422 });
+    }
+
+    data = {
+      sourceType,
+      title: normalizeFileTitle(parsedUrl.pathname),
+      sourceUrl: parsedUrl.toString(),
+      sourceHost: parsedUrl.hostname,
+      sourceExtension: extension,
+      thumbnailUrl: null,
+      durationSec: null,
+      availableFormats: [extension],
+      availableQualities: ["source"],
+    };
+  }
 
   const response: ApiResponse<VideoInfoData> = {
     ok: true,

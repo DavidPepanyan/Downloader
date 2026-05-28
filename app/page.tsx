@@ -24,19 +24,24 @@ export default function HomePage() {
   const [url, setUrl] = useState("");
   const [quality, setQuality] = useState("source");
   const [format, setFormat] = useState("mp4");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<{
+    sourceType: "direct" | "youtube";
     title: string;
     sourceHost: string;
     sourceExtension: string | null;
+    sourceUrl: string;
+    availableFormats: string[];
+    availableQualities: string[];
   } | null>(null);
 
-  const isSubmitDisabled = useMemo(() => !url.trim() || isLoading, [url, isLoading]);
+  const isSubmitDisabled = useMemo(() => !url.trim() || isChecking, [url, isChecking]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsLoading(true);
+    setIsChecking(true);
     setErrorMessage(null);
     setResult(null);
 
@@ -53,9 +58,13 @@ export default function HomePage() {
         | {
             ok: true;
             data: {
+              sourceType: "direct" | "youtube";
               title: string;
               sourceHost: string;
               sourceExtension: string | null;
+              sourceUrl: string;
+              availableFormats: string[];
+              availableQualities: string[];
             };
           }
         | {
@@ -69,14 +78,75 @@ export default function HomePage() {
       }
 
       setResult({
+        sourceType: payload.data.sourceType,
         title: payload.data.title,
         sourceHost: payload.data.sourceHost,
         sourceExtension: payload.data.sourceExtension,
+        sourceUrl: payload.data.sourceUrl,
+        availableFormats: payload.data.availableFormats,
+        availableQualities: payload.data.availableQualities,
       });
+      if (payload.data.availableFormats.length > 0) {
+        setFormat(payload.data.availableFormats[0]);
+      }
+      if (payload.data.availableQualities.length > 0) {
+        setQuality(payload.data.availableQualities[0]);
+      }
     } catch {
       setErrorMessage("Network error. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsChecking(false);
+    }
+  }
+
+  async function handleDownload() {
+    if (!result) return;
+
+    setErrorMessage(null);
+    setIsDownloading(true);
+    try {
+      const response = await fetch("/api/video/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: result.sourceUrl,
+          format,
+          quality,
+        }),
+      });
+
+      const contentType = response.headers.get("content-type") ?? "";
+      if (!response.ok || contentType.includes("application/json")) {
+        const payload = (await response.json()) as {
+          ok: boolean;
+          error?: { message?: string };
+          data?: { downloadUrl?: string };
+        };
+
+        if (payload?.ok && payload.data?.downloadUrl) {
+          window.open(payload.data.downloadUrl, "_blank", "noopener,noreferrer");
+          return;
+        }
+
+        setErrorMessage(payload.error?.message ?? "Download failed.");
+        return;
+      }
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${result.title}.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      setErrorMessage("Network error. Please try again.");
+    } finally {
+      setIsDownloading(false);
     }
   }
 
@@ -97,7 +167,7 @@ export default function HomePage() {
           <CardHeader>
             <CardTitle>Download your media</CardTitle>
             <CardDescription>
-              Paste a direct media URL, then choose format and quality.
+              Paste a YouTube or direct media URL, then choose format and quality.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -124,10 +194,13 @@ export default function HomePage() {
                     <SelectValue placeholder="Select quality" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="source">Source</SelectItem>
-                    <SelectItem value="1080p">1080p</SelectItem>
-                    <SelectItem value="720p">720p</SelectItem>
-                    <SelectItem value="480p">480p</SelectItem>
+                    {(result?.availableQualities ?? ["source", "1080p", "720p", "480p"]).map(
+                      (item) => (
+                        <SelectItem key={item} value={item}>
+                          {item.toUpperCase()}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -139,17 +212,19 @@ export default function HomePage() {
                     <SelectValue placeholder="Select format" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mp4">MP4</SelectItem>
-                    <SelectItem value="webm">WEBM</SelectItem>
-                    <SelectItem value="mp3">MP3</SelectItem>
+                    {(result?.availableFormats ?? ["mp4", "webm", "mp3"]).map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item.toUpperCase()}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
               <Button type="submit" size="lg" className="h-11 w-full" disabled={isSubmitDisabled}>
-                {isLoading ? <Loader2 className="animate-spin" /> : <Download />}
-                {isLoading ? "Checking..." : "Download"}
+                {isChecking ? <Loader2 className="animate-spin" /> : <Download />}
+                {isChecking ? "Checking..." : "Check media"}
               </Button>
             </form>
 
@@ -163,8 +238,18 @@ export default function HomePage() {
               <div className="rounded-lg border bg-muted/40 px-4 py-3">
                 <p className="text-sm font-medium">{result.title}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Host: {result.sourceHost} | Format: {(result.sourceExtension ?? format).toUpperCase()} | Quality: {quality}
+                  Source: {result.sourceType.toUpperCase()} | Host: {result.sourceHost} | Format:{" "}
+                  {(result.sourceExtension ?? format).toUpperCase()} | Quality: {quality}
                 </p>
+                <Button
+                  type="button"
+                  className="mt-3 h-9"
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                >
+                  {isDownloading ? <Loader2 className="animate-spin" /> : <Download />}
+                  {isDownloading ? "Preparing..." : "Start download"}
+                </Button>
               </div>
             ) : null}
           </CardContent>

@@ -1,7 +1,9 @@
 export type ApiErrorCode =
   | "BAD_REQUEST"
   | "INVALID_URL"
+  | "UNSUPPORTED_SOURCE"
   | "UNSUPPORTED_FORMAT"
+  | "DOWNLOAD_FAILED"
   | "METHOD_NOT_ALLOWED"
   | "INTERNAL_ERROR";
 
