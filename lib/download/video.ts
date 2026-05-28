@@ -11,11 +11,11 @@ const PLAYER_SCRIPT_FILE_PATTERN = /^\d+-player-script\.js$/;
 
 async function cleanupGeneratedPlayerScripts() {
   try {
-    const workspaceRoot = process.cwd();
+    const workspaceRoot = /*turbopackIgnore: true*/ process.cwd();
     const entries = await readdir(workspaceRoot, { withFileTypes: true });
     const deletions = entries
       .filter((entry) => entry.isFile() && PLAYER_SCRIPT_FILE_PATTERN.test(entry.name))
-      .map((entry) => unlink(resolve(workspaceRoot, entry.name)));
+      .map((entry) => unlink(resolve(/*turbopackIgnore: true*/ workspaceRoot, entry.name)));
 
     if (deletions.length > 0) {
       await Promise.allSettled(deletions);

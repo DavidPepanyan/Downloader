@@ -1,15 +1,15 @@
 import createNextIntlPlugin from "next-intl/plugin";
 import type { NextConfig } from "next";
-import { routing } from "./src/i18n/routing";
+import { defaultLocale } from "./src/i18n/config";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   async redirects() {
     return [
-      { source: "/privacy", destination: `/${routing.defaultLocale}/privacy`, permanent: true },
-      { source: "/terms", destination: `/${routing.defaultLocale}/terms`, permanent: true },
-      { source: "/dmca", destination: `/${routing.defaultLocale}/dmca`, permanent: true },
+      { source: "/privacy", destination: `/${defaultLocale}/privacy`, permanent: true },
+      { source: "/terms", destination: `/${defaultLocale}/terms`, permanent: true },
+      { source: "/dmca", destination: `/${defaultLocale}/dmca`, permanent: true },
     ];
   },
 };
