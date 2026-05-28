@@ -69,6 +69,12 @@ export function Header() {
               <DropdownMenuItem asChild>
                 <Link href="/privacy">Privacy Policy</Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/terms">Terms of Use</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dmca">Copyright &amp; DMCA</Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
