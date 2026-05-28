@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import { Download, Loader2 } from "lucide-react";
+import { ClipboardPaste, Download, Link2, Loader2, SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -62,6 +62,33 @@ function mapErrorMessage(error: ApiErrorPayload): UiError {
 }
 
 export default function HomePage() {
+  const steps = [
+    {
+      icon: Link2,
+      title: "Copy or prepare your media source",
+      description:
+        "Use a supported video link such as YouTube or a direct media URL, or prepare an image file for conversion.",
+    },
+    {
+      icon: Download,
+      title: "Open the downloader tool",
+      description:
+        "Go to this website and use the downloader section to start processing your media.",
+    },
+    {
+      icon: ClipboardPaste,
+      title: "Paste the link or upload a file",
+      description:
+        "Paste your media URL into the input field, or upload an image when you need image conversion.",
+    },
+    {
+      icon: SlidersHorizontal,
+      title: "Select options and download",
+      description:
+        "Choose format and quality options, then start processing and download the final result.",
+    },
+  ];
+
   const [url, setUrl] = useState("");
   const [quality, setQuality] = useState("source");
   const [format, setFormat] = useState("mp4");
@@ -213,6 +240,43 @@ export default function HomePage() {
           system processes the media and prepares it for download. Fast and
           simple extraction in one place. No extra steps required.
         </p>
+
+        <section className="mt-14 w-full max-w-4xl text-left">
+          <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
+            How it works
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-6 text-muted-foreground sm:text-base">
+            A quick four-step flow designed to stay simple, even when source links
+            and formats vary.
+          </p>
+          <div className="relative mx-auto mt-10 max-w-3xl">
+            <div className="absolute left-5 top-2 h-[calc(100%-1rem)] w-px bg-gradient-to-b from-primary/70 via-primary/30 to-transparent" />
+            <div className="space-y-7">
+              {steps.map((step, index) => (
+                <div
+                  key={step.title}
+                  className={`group relative flex gap-4 rounded-xl border border-border/60 bg-card/85 p-4 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                    index % 2 === 0 ? "sm:ml-0" : "sm:ml-5"
+                  }`}
+                >
+                  <div className="relative z-10 mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="mb-1 inline-flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1 text-xs font-medium text-muted-foreground">
+                      <step.icon className="size-3.5" />
+                      Step {index + 1}
+                    </div>
+                    <h3 className="text-base font-semibold leading-6">{step.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground sm:text-base">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
         <Card className="mt-10 w-full max-w-3xl text-left shadow-sm">
           <CardHeader>
