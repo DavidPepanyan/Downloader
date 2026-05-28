@@ -8,7 +8,7 @@ import {
 } from "@/lib/download/video";
 import { isDirectHostAllowed } from "@/lib/security/allowed-hosts";
 import { checkRateLimit } from "@/lib/security/rate-limit";
-import { withTimeout } from "@/lib/utils/errors";
+import { RequestTimeoutError, withTimeout } from "@/lib/utils/errors";
 import { ENV } from "@/lib/utils/env";
 import { fail, ok } from "@/lib/utils/response";
 import type { VideoInfoData, VideoInfoRequest } from "@/types/video";
@@ -88,8 +88,21 @@ export async function POST(request: Request) {
         availableFormats: ytInfo.availableFormats,
         availableQualities: ytInfo.availableQualities,
       };
-    } catch {
-      return fail("REQUEST_TIMEOUT", "Failed to read YouTube video metadata.", 502);
+    } catch (error) {
+      if (error instanceof RequestTimeoutError) {
+        return fail(
+          "REQUEST_TIMEOUT",
+          "The request took too long. Please try again in a few moments.",
+          504
+        );
+      }
+
+      console.error("video/info youtube metadata error:", error);
+      return fail(
+        "DOWNLOAD_FAILED",
+        "Could not read media metadata from this source. Please check the link and try again.",
+        502
+      );
     }
   } else {
     if (!isDirectHostAllowed(parsedUrl.hostname)) {

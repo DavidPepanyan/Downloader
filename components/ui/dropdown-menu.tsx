@@ -54,8 +54,8 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none select-none",
-        "focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none select-none",
+        "hover:bg-muted/30 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "data-[inset=true]:pl-8",
         variant === "destructive" && "text-destructive focus:bg-destructive/10",
         className
@@ -97,7 +97,7 @@ function DropdownMenuSubTrigger({
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
       className={cn(
-        "flex cursor-default items-center rounded-md px-2 py-1.5 text-sm outline-none select-none focus:bg-accent",
+        "flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm outline-none select-none hover:bg-muted/30 focus:bg-accent",
         "data-[inset=true]:pl-8",
         className
       )}
@@ -136,7 +136,7 @@ function DropdownMenuCheckboxItem({
       data-slot="dropdown-menu-checkbox-item"
       checked={checked}
       className={cn(
-        "relative flex cursor-default items-center rounded-md py-1.5 pr-2 pl-8 text-sm outline-none select-none focus:bg-accent",
+        "relative flex cursor-pointer items-center rounded-md py-1.5 pr-2 pl-8 text-sm outline-none select-none hover:bg-muted/30 focus:bg-accent",
         className
       )}
       {...props}
@@ -166,7 +166,7 @@ function DropdownMenuRadioItem({
     <DropdownMenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
       className={cn(
-        "relative flex cursor-default items-center rounded-md py-1.5 pr-2 pl-8 text-sm outline-none select-none focus:bg-accent",
+        "relative flex cursor-pointer items-center rounded-md py-1.5 pr-2 pl-8 text-sm outline-none select-none hover:bg-muted/30 focus:bg-accent",
         className
       )}
       {...props}

@@ -11,7 +11,7 @@ import {
 } from "@/lib/download/video";
 import { isDirectHostAllowed } from "@/lib/security/allowed-hosts";
 import { checkRateLimit } from "@/lib/security/rate-limit";
-import { withTimeout } from "@/lib/utils/errors";
+import { RequestTimeoutError, withTimeout } from "@/lib/utils/errors";
 import { ENV } from "@/lib/utils/env";
 import { fail, ok } from "@/lib/utils/response";
 import type { VideoDownloadRequest } from "@/types/video";
@@ -118,8 +118,21 @@ export async function POST(request: Request) {
         "Content-Disposition": `attachment; filename="${title}"`,
       },
     });
-  } catch {
-    return fail("DOWNLOAD_FAILED", "Could not start download for this video.", 502);
+  } catch (error) {
+    if (error instanceof RequestTimeoutError) {
+      return fail(
+        "REQUEST_TIMEOUT",
+        "The request took too long. Please try again in a few moments.",
+        504
+      );
+    }
+
+    console.error("video/download youtube error:", error);
+    return fail(
+      "DOWNLOAD_FAILED",
+      "Could not start download for this source. Please check the link and try again.",
+      502
+    );
   }
 }
 

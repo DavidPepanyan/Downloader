@@ -56,8 +56,9 @@ function mapErrorMessage(error: ApiErrorPayload): UiError {
     FORBIDDEN_HOST: "This direct host is blocked by current security policy.",
     UNSUPPORTED_SOURCE: "This source is unsupported. Use YouTube or a direct media URL.",
     UNSUPPORTED_FORMAT: "This format is not available for the selected media.",
-    DOWNLOAD_FAILED: "Download could not be started. Please try again.",
-    REQUEST_TIMEOUT: "The request took too long. Please try again.",
+    DOWNLOAD_FAILED:
+      "We could not process this source right now. Please verify the link and try again.",
+    REQUEST_TIMEOUT: "The request took too long. Please try again in a few moments.",
     INTERNAL_ERROR: "Unexpected server error. Please try again later.",
   };
 
