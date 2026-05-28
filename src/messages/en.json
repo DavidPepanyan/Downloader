@@ -9,7 +9,7 @@
     },
     "footer": {
       "brand": "Downloader",
-      "description": "Lightweight media downloader for supported links and formats.",
+      "description": "Lightweight video downloader for supported links and formats.",
       "legal": "Legal",
       "privacy": "Privacy Policy",
       "terms": "Terms of Use",
@@ -17,7 +17,7 @@
     }
   },
   "home": {
-    "badge": "Fast media downloader",
+    "badge": "Fast video downloader",
     "title": "Downloader",
     "description": "Paste a video link and choose your preferred quality and format. The system processes the media and prepares it for download. Fast and simple extraction in one place. No extra steps required.",
     "howItWorks": {
@@ -27,16 +27,16 @@
     "stepLabel": "Step {step}",
     "steps": {
       "1": {
-        "title": "Copy or prepare your media source",
-        "description": "Use a supported video link such as YouTube or a direct media URL, or prepare an image file for conversion."
+        "title": "Copy your video link",
+        "description": "Use a supported source such as YouTube or a direct MP4/WEBM link."
       },
       "2": {
         "title": "Open the downloader tool",
         "description": "Go to this website and use the downloader section to start processing your media."
       },
       "3": {
-        "title": "Paste the link or upload a file",
-        "description": "Paste your media URL into the input field, or upload an image when you need image conversion."
+        "title": "Paste the link",
+        "description": "Paste the video URL into the input field on this page."
       },
       "4": {
         "title": "Select options and download",
