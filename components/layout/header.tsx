@@ -1,11 +1,37 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Globe } from "lucide-react";
+import { ChevronDown, Globe, Moon, Sun } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Header() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const isDarkPreferred = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const resolvedTheme =
+      savedTheme === "light" || savedTheme === "dark"
+        ? savedTheme
+        : isDarkPreferred
+          ? "dark"
+          : "light";
+
+    setTheme(resolvedTheme);
+    document.documentElement.classList.toggle("dark", resolvedTheme === "dark");
+    setMounted(true);
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    localStorage.setItem("theme", nextTheme);
+    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+  }
+
   return (
     <header className="border-b bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5">
@@ -42,7 +68,22 @@ export function Header() {
           </div>
         </div>
 
-        <Globe className="size-4 text-foreground/80" />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >
+            {mounted && theme === "dark" ? (
+              <Sun className="size-4" />
+            ) : (
+              <Moon className="size-4" />
+            )}
+          </button>
+          <Globe className="size-4 text-foreground/80" />
+        </div>
       </div>
     </header>
   );
