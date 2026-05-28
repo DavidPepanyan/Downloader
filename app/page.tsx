@@ -278,7 +278,17 @@ export default function HomePage() {
           </div>
         </section>
 
-        <Card className="mt-10 w-full max-w-3xl text-left shadow-sm">
+        <div className="mt-14 w-full max-w-3xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Start downloading
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">
+            Paste your link, choose preferred options, and process the media in one
+            place.
+          </p>
+        </div>
+
+        <Card className="mt-8 w-full max-w-3xl text-left shadow-sm">
           <CardHeader>
             <CardTitle>Download your media</CardTitle>
             <CardDescription>
