@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Globe, Moon, Sun } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -13,23 +13,12 @@ import {
 import { cn } from "@/lib/utils";
 
 export function Header() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "light";
     const savedTheme = localStorage.getItem("theme");
-    const isDarkPreferred = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const resolvedTheme =
-      savedTheme === "light" || savedTheme === "dark"
-        ? savedTheme
-        : isDarkPreferred
-          ? "dark"
-          : "light";
-
-    setTheme(resolvedTheme);
-    document.documentElement.classList.toggle("dark", resolvedTheme === "dark");
-    setMounted(true);
-  }, []);
+    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
 
   function toggleTheme() {
     const nextTheme = theme === "dark" ? "light" : "dark";
@@ -87,7 +76,7 @@ export function Header() {
             aria-label="Toggle theme"
             title="Toggle theme"
           >
-            {mounted && theme === "dark" ? (
+            {theme === "dark" ? (
               <Sun className="size-4" />
             ) : (
               <Moon className="size-4" />

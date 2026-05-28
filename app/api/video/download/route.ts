@@ -109,12 +109,7 @@ export async function POST(request: Request) {
       "Download initialization timed out."
     );
     const title = `youtube-${Date.now()}.${fileExtension}`;
-    const contentType =
-      fileExtension === "mp3"
-        ? "audio/mpeg"
-        : fileExtension === "webm"
-          ? "video/webm"
-          : "video/mp4";
+    const contentType = fileExtension === "webm" ? "video/webm" : "video/mp4";
 
     return new NextResponse(Readable.toWeb(stream) as ReadableStream, {
       status: 200,

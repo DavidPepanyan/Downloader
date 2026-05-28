@@ -1,10 +1,29 @@
 import ytdl from "@distube/ytdl-core";
+import { readdir, unlink } from "node:fs/promises";
+import { resolve } from "node:path";
 
 import type { VideoFormat, VideoQuality, VideoSourceType } from "@/types/video";
 
 const DIRECT_FORMAT_EXTENSIONS: VideoFormat[] = ["mp4", "webm", "mp3"];
 const YOUTUBE_ALLOWED_FORMATS: VideoFormat[] = ["mp4", "webm"];
 const YOUTUBE_QUALITY_ORDER: VideoQuality[] = ["1080p", "720p", "480p", "360p"];
+const PLAYER_SCRIPT_FILE_PATTERN = /^\d+-player-script\.js$/;
+
+async function cleanupGeneratedPlayerScripts() {
+  try {
+    const workspaceRoot = process.cwd();
+    const entries = await readdir(workspaceRoot, { withFileTypes: true });
+    const deletions = entries
+      .filter((entry) => entry.isFile() && PLAYER_SCRIPT_FILE_PATTERN.test(entry.name))
+      .map((entry) => unlink(resolve(workspaceRoot, entry.name)));
+
+    if (deletions.length > 0) {
+      await Promise.allSettled(deletions);
+    }
+  } catch {
+    // Best-effort cleanup; do not fail request flow.
+  }
+}
 
 export function detectVideoSource(url: URL): VideoSourceType | null {
   if (ytdl.validateURL(url.toString())) {
@@ -44,6 +63,7 @@ export function normalizeFileTitle(pathname: string): string {
 }
 
 export async function getYoutubeVideoInfo(url: string) {
+  await cleanupGeneratedPlayerScripts();
   const info = await ytdl.getInfo(url);
   const title = info.videoDetails.title || "youtube-video";
   const durationSec = Number(info.videoDetails.lengthSeconds || 0) || null;
@@ -76,6 +96,7 @@ export async function getYoutubeVideoInfo(url: string) {
     availableQualities.add("source");
   }
 
+  await cleanupGeneratedPlayerScripts();
   return {
     title,
     durationSec,
@@ -86,6 +107,7 @@ export async function getYoutubeVideoInfo(url: string) {
 }
 
 export async function resolveYoutubeDownload(url: string, format: VideoFormat, quality: VideoQuality) {
+  await cleanupGeneratedPlayerScripts();
   if (format === "mp3") {
     throw new Error("MP3 conversion for YouTube is not supported.");
   }
@@ -108,6 +130,7 @@ export async function resolveYoutubeDownload(url: string, format: VideoFormat, q
     stream = ytdl(url, { quality: candidate?.itag ?? "highest", filter });
   }
 
-  const fileExtension = format === "mp3" ? "mp3" : format;
+  const fileExtension = format;
+  await cleanupGeneratedPlayerScripts();
   return { stream, fileExtension };
 }
