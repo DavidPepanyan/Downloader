@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
 import "./globals.css";
 
 type RootLayoutProps = {
@@ -20,15 +18,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
   `;
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

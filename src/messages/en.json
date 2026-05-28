@@ -1,0 +1,133 @@
+{
+  "layout": {
+    "header": {
+      "brand": "Downloader",
+      "more": "More",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "dmca": "Copyright & DMCA"
+    },
+    "footer": {
+      "brand": "Downloader",
+      "description": "Lightweight media downloader for supported links and formats.",
+      "legal": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "dmca": "Copyright & DMCA"
+    }
+  },
+  "home": {
+    "badge": "Fast media downloader",
+    "title": "Downloader",
+    "description": "Paste a video link and choose your preferred quality and format. The system processes the media and prepares it for download. Fast and simple extraction in one place. No extra steps required.",
+    "howItWorks": {
+      "title": "How it works",
+      "description": "A quick four-step flow designed to stay simple, even when source links and formats vary."
+    },
+    "stepLabel": "Step {step}",
+    "steps": {
+      "1": {
+        "title": "Copy or prepare your media source",
+        "description": "Use a supported video link such as YouTube or a direct media URL, or prepare an image file for conversion."
+      },
+      "2": {
+        "title": "Open the downloader tool",
+        "description": "Go to this website and use the downloader section to start processing your media."
+      },
+      "3": {
+        "title": "Paste the link or upload a file",
+        "description": "Paste your media URL into the input field, or upload an image when you need image conversion."
+      },
+      "4": {
+        "title": "Select options and download",
+        "description": "Choose format and quality options, then start processing and download the final result."
+      }
+    },
+    "start": {
+      "title": "Start downloading",
+      "description": "Paste your link, choose preferred options, and process the media in one place."
+    },
+    "form": {
+      "title": "Download your media",
+      "description": "Paste a YouTube or direct media URL, then choose format and quality.",
+      "urlLabel": "Video URL",
+      "urlPlaceholder": "https://example.com/video.mp4",
+      "qualityLabel": "Quality",
+      "formatLabel": "Format",
+      "selectQuality": "Select quality",
+      "selectFormat": "Select format",
+      "checking": "Checking...",
+      "checkMedia": "Check media",
+      "preparing": "Preparing...",
+      "startDownload": "Start download"
+    },
+    "result": {
+      "source": "Source",
+      "host": "Host",
+      "format": "Format",
+      "quality": "Quality"
+    },
+    "faq": {
+      "title": "FAQ",
+      "q1": "What does this tool do?",
+      "a1": "You can paste a link, choose format and quality, and download the file.",
+      "q2": "Is it free to use?",
+      "a2": "Yes, the service is free.",
+      "q3": "Do I need an account?",
+      "a3": "No, you can use it without registration.",
+      "q4": "What formats are available?",
+      "a4": "You can usually download in MP4 or MP3.",
+      "q5": "Can I choose video quality and format?",
+      "a5": "Yes. You can select the desired quality and output format before downloading.",
+      "q6": "Does it work on mobile?",
+      "a6": "Yes, it works on most mobile browsers.",
+      "q7": "Why is my link not working?",
+      "a7": "The link may be invalid, unsupported, or temporarily unavailable.",
+      "q8": "How fast is the download?",
+      "a8": "Speed depends on the file size and your internet connection."
+    },
+    "errors": {
+      "requestFailed": "Request failed.",
+      "rateLimited": "Too many requests right now. Please try again shortly.",
+      "rateLimitedWithSeconds": "Too many requests right now. Try again in {seconds} seconds.",
+      "badRequest": "Request is invalid. Please check the URL and try again.",
+      "invalidUrl": "Please enter a valid URL.",
+      "forbiddenHost": "This direct host is blocked by current security policy.",
+      "unsupportedSource": "This source is unsupported. Use YouTube or a direct media URL.",
+      "unsupportedFormat": "This format is not available for the selected media.",
+      "downloadFailed": "We could not process this source right now. Please verify the link and try again.",
+      "requestTimeout": "The request took too long. Please try again in a few moments.",
+      "internalError": "Unexpected server error. Please try again later.",
+      "networkError": "Network error. Please check connection and try again."
+    }
+  },
+  "legal": {
+    "terms": {
+      "title": "Terms of Use",
+      "p1": "This service is provided \"as is\" for personal and lawful use only.",
+      "p2": "By using this website, you agree that you are solely responsible for the actions you take and for any content you access, process, or download.",
+      "p3": "You may only use this service with content that you own, have permission to access, or are legally allowed to use.",
+      "p4": "We do not store user accounts, personal data, or download history.",
+      "p5": "We may restrict or block access to the service if we detect abuse, illegal activity, or violation of these terms.",
+      "p6": "We do not guarantee that the service will always work with all websites, formats, or sources.",
+      "p7": "Use of this service is at your own risk."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "p1": "This service does not require registration and does not collect personal accounts or profiles.",
+      "p2": "When you use the service, we may temporarily process the URL you submit in order to provide the requested functionality.",
+      "p3": "We may also process basic technical information such as IP address, browser type, and request logs for security and operational purposes.",
+      "p4": "We do not sell, share, or use personal data for marketing purposes.",
+      "p5": "Temporary processing files may be automatically deleted after completion.",
+      "p6": "We do not permanently store user-submitted content or download history.",
+      "p7": "You are responsible for ensuring that any content you process complies with applicable laws and rights of third parties."
+    },
+    "dmca": {
+      "title": "Copyright & DMCA Policy",
+      "p1": "We respect intellectual property rights and comply with valid copyright removal requests.",
+      "p2": "If you believe that content processed through this service violates your rights, you may contact us with a description of the issue and relevant details.",
+      "p3": "We may investigate and remove access to the reported content or restrict related functionality if necessary.",
+      "p4": "We reserve the right to block users who repeatedly violate copyright rules or misuse the service."
+    }
+  }
+}
