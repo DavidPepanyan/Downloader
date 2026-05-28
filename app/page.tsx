@@ -20,13 +20,54 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+type ApiErrorPayload = {
+  code?: string;
+  message?: string;
+};
+
+type UiError = {
+  code: string;
+  message: string;
+};
+
+function mapErrorMessage(error: ApiErrorPayload): UiError {
+  const code = error.code ?? "UNKNOWN_ERROR";
+  const fallbackMessage = error.message ?? "Request failed.";
+
+  if (code === "RATE_LIMITED") {
+    const seconds = fallbackMessage.match(/(\d+)s/)?.[1];
+    return {
+      code,
+      message: seconds
+        ? `Too many requests right now. Try again in ${seconds} seconds.`
+        : "Too many requests right now. Please try again shortly.",
+    };
+  }
+
+  const friendlyMessages: Record<string, string> = {
+    BAD_REQUEST: "Request is invalid. Please check the URL and try again.",
+    INVALID_URL: "Please enter a valid URL.",
+    FORBIDDEN_HOST: "This direct host is blocked by current security policy.",
+    UNSUPPORTED_SOURCE: "This source is unsupported. Use YouTube or a direct media URL.",
+    UNSUPPORTED_FORMAT: "This format is not available for the selected media.",
+    DOWNLOAD_FAILED: "Download could not be started. Please try again.",
+    REQUEST_TIMEOUT: "The request took too long. Please try again.",
+    INTERNAL_ERROR: "Unexpected server error. Please try again later.",
+  };
+
+  return {
+    code,
+    message: friendlyMessages[code] ?? fallbackMessage,
+  };
+}
+
 export default function HomePage() {
   const [url, setUrl] = useState("");
   const [quality, setQuality] = useState("source");
   const [format, setFormat] = useState("mp4");
   const [isChecking, setIsChecking] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [error, setError] = useState<UiError | null>(null);
   const [result, setResult] = useState<{
     sourceType: "direct" | "youtube";
     title: string;
@@ -42,7 +83,7 @@ export default function HomePage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsChecking(true);
-    setErrorMessage(null);
+    setError(null);
     setResult(null);
 
     try {
@@ -69,11 +110,15 @@ export default function HomePage() {
           }
         | {
             ok: false;
-            error: { message?: string };
+            error: ApiErrorPayload;
           };
 
       if (!response.ok || !payload.ok) {
-        setErrorMessage(payload.ok ? "Request failed." : payload.error.message ?? "Request failed.");
+        setError(
+          payload.ok
+            ? { code: "UNKNOWN_ERROR", message: "Request failed." }
+            : mapErrorMessage(payload.error)
+        );
         return;
       }
 
@@ -93,7 +138,10 @@ export default function HomePage() {
         setQuality(payload.data.availableQualities[0]);
       }
     } catch {
-      setErrorMessage("Network error. Please try again.");
+      setError({
+        code: "NETWORK_ERROR",
+        message: "Network error. Please check connection and try again.",
+      });
     } finally {
       setIsChecking(false);
     }
@@ -102,7 +150,7 @@ export default function HomePage() {
   async function handleDownload() {
     if (!result) return;
 
-    setErrorMessage(null);
+    setError(null);
     setIsDownloading(true);
     try {
       const response = await fetch("/api/video/download", {
@@ -121,7 +169,7 @@ export default function HomePage() {
       if (!response.ok || contentType.includes("application/json")) {
         const payload = (await response.json()) as {
           ok: boolean;
-          error?: { message?: string };
+          error?: ApiErrorPayload;
           data?: { downloadUrl?: string };
         };
 
@@ -130,7 +178,7 @@ export default function HomePage() {
           return;
         }
 
-        setErrorMessage(payload.error?.message ?? "Download failed.");
+        setError(mapErrorMessage(payload.error ?? { code: "DOWNLOAD_FAILED", message: "Download failed." }));
         return;
       }
 
@@ -144,7 +192,10 @@ export default function HomePage() {
       link.remove();
       URL.revokeObjectURL(blobUrl);
     } catch {
-      setErrorMessage("Network error. Please try again.");
+      setError({
+        code: "NETWORK_ERROR",
+        message: "Network error. Please check connection and try again.",
+      });
     } finally {
       setIsDownloading(false);
     }
@@ -228,9 +279,10 @@ export default function HomePage() {
               </Button>
             </form>
 
-            {errorMessage ? (
+            {error ? (
               <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                {errorMessage}
+                <p className="font-semibold">{error.code}</p>
+                <p className="mt-1">{error.message}</p>
               </div>
             ) : null}
 
