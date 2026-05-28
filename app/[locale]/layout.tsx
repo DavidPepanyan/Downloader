@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
@@ -13,6 +14,28 @@ type LocaleLayoutProps = {
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+type LocaleParams = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    return {};
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const baseUrl = appUrl.replace(/\/$/, "");
+  const languages = Object.fromEntries(
+    routing.locales.map((currentLocale) => [currentLocale, `${baseUrl}/${currentLocale}`])
+  );
+
+  return {
+    alternates: {
+      canonical: `${baseUrl}/${locale}`,
+      languages,
+    },
+  };
 }
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
