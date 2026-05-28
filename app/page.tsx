@@ -3,6 +3,12 @@
 import { FormEvent, useMemo, useState } from "react";
 import { ClipboardPaste, Download, Link2, Loader2, SlidersHorizontal } from "lucide-react";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -245,7 +251,7 @@ export default function HomePage() {
           <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
             How it works
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-6 text-muted-foreground sm:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-center text-base leading-7 text-muted-foreground sm:text-lg">
             A quick four-step flow designed to stay simple, even when source links
             and formats vary.
           </p>
@@ -267,8 +273,8 @@ export default function HomePage() {
                       <step.icon className="size-3.5" />
                       Step {index + 1}
                     </div>
-                    <h3 className="text-base font-semibold leading-6">{step.title}</h3>
-                    <p className="mt-1 text-sm leading-6 text-muted-foreground sm:text-base">
+                    <h3 className="text-lg font-semibold leading-7">{step.title}</h3>
+                    <p className="mt-1 text-base leading-7 text-muted-foreground sm:text-lg">
                       {step.description}
                     </p>
                   </div>
@@ -282,7 +288,7 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Start downloading
           </h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">
+          <p className="mt-3 text-base leading-7 text-muted-foreground sm:text-lg">
             Paste your link, choose preferred options, and process the media in one
             place.
           </p>
@@ -380,6 +386,53 @@ export default function HomePage() {
             ) : null}
           </CardContent>
         </Card>
+
+        <section className="mt-14 w-full max-w-3xl text-left">
+          <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">FAQ</h2>
+          <div className="mt-7 rounded-xl border bg-card p-5 shadow-sm">
+            <h3 className="text-lg font-semibold">What does this tool do?</h3>
+            <p className="mt-2 text-base leading-7 text-muted-foreground sm:text-lg">
+              You can paste a link, choose format and quality, and download the file.
+            </p>
+          </div>
+
+          <Accordion type="single" collapsible className="mt-4 rounded-xl border bg-card px-5 shadow-sm">
+            <AccordionItem value="faq-2">
+              <AccordionTrigger>Is it free to use?</AccordionTrigger>
+              <AccordionContent>Yes, the service is free.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-3">
+              <AccordionTrigger>Do I need an account?</AccordionTrigger>
+              <AccordionContent>No, you can use it without registration.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-4">
+              <AccordionTrigger>What formats are available?</AccordionTrigger>
+              <AccordionContent>You can usually download in MP4 or MP3.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-5">
+              <AccordionTrigger>Can I choose video quality and format?</AccordionTrigger>
+              <AccordionContent>
+                Yes. You can select the desired quality and output format before downloading.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-6">
+              <AccordionTrigger>Does it work on mobile?</AccordionTrigger>
+              <AccordionContent>Yes, it works on most mobile browsers.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-7">
+              <AccordionTrigger>Why is my link not working?</AccordionTrigger>
+              <AccordionContent>
+                The link may be invalid, unsupported, or temporarily unavailable.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-8">
+              <AccordionTrigger>How fast is the download?</AccordionTrigger>
+              <AccordionContent>
+                Speed depends on the file size and your internet connection.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </section>
       </section>
     </main>
   );
