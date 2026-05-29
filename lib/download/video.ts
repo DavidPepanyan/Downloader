@@ -25,6 +25,6 @@ export async function resolveYoutubeDownloadStream(
   url: string,
   format: VideoFormat,
   quality: VideoQuality
-): Promise<{ stream: Readable; fileExtension: VideoFormat }> {
+): Promise<{ stream: Readable; fileExtension: VideoFormat; byteLength: number }> {
   return resolveYoutubeDownload(url, format, quality);
 }

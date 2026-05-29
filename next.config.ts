@@ -5,6 +5,7 @@ import { defaultLocale } from "./src/i18n/config";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["ffmpeg-static", "@distube/yt-dlp"],
   async redirects() {
     return [
       { source: "/privacy", destination: `/${defaultLocale}/privacy`, permanent: true },

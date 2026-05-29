@@ -104,10 +104,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const { stream, fileExtension } = await withTimeout(
+    const { stream, fileExtension, byteLength } = await withTimeout(
       resolveYoutubeDownloadStream(parsedUrl.toString(), body.format, body.quality),
-      ENV.requestTimeoutMs,
-      "Download initialization timed out."
+      ENV.ytdlpDownloadTimeoutMs,
+      "Download timed out."
     );
     const title = `youtube-${Date.now()}.${fileExtension}`;
     const contentType = fileExtension === "webm" ? "video/webm" : "video/mp4";
@@ -116,6 +116,7 @@ export async function POST(request: Request) {
       status: 200,
       headers: {
         "Content-Type": contentType,
+        "Content-Length": String(byteLength),
         "Content-Disposition": `attachment; filename="${title}"`,
       },
     });

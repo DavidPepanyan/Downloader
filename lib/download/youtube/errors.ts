@@ -40,6 +40,30 @@ export function mapYtdlpError(error: unknown): { code: ApiErrorCode; message: st
     };
   }
 
+  if (text.includes("ffmpeg") && (text.includes("not found") || text.includes("not installed"))) {
+    return {
+      code: "DOWNLOAD_FAILED",
+      message:
+        "High-quality download requires ffmpeg. Install ffmpeg or run npm install in this project.",
+    };
+  }
+
+  if (text.includes("ffmpeg is required") || text.includes("set ffmpeg_path")) {
+    return {
+      code: "DOWNLOAD_FAILED",
+      message:
+        "ffmpeg is required for YouTube downloads. Run npm install in the project folder or set FFMPEG_PATH.",
+    };
+  }
+
+  if (text.includes("did not produce a merged") || text.includes("merge may have failed")) {
+    return {
+      code: "DOWNLOAD_FAILED",
+      message:
+        "Could not merge video and audio. Ensure ffmpeg is installed (npm install) and try again.",
+    };
+  }
+
   return {
     code: "DOWNLOAD_FAILED",
     message: "Could not process this source right now. Please check the link and try again.",

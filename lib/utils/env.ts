@@ -14,8 +14,14 @@ function parseAllowedHosts(raw: string | undefined): string[] {
     .filter(Boolean);
 }
 
+const requestTimeoutMs = toPositiveInt(process.env.REQUEST_TIMEOUT_MS, LIMITS.requestTimeoutMs);
+
 export const ENV = {
-  requestTimeoutMs: toPositiveInt(process.env.REQUEST_TIMEOUT_MS, LIMITS.requestTimeoutMs),
+  requestTimeoutMs,
+  ytdlpDownloadTimeoutMs: toPositiveInt(
+    process.env.YTDLP_DOWNLOAD_TIMEOUT_MS,
+    Math.max(requestTimeoutMs, 120_000)
+  ),
   maxVideoDurationSec: toPositiveInt(process.env.MAX_VIDEO_DURATION_SEC, LIMITS.maxVideoDurationSec),
   rateLimitWindowMs: toPositiveInt(process.env.RATE_LIMIT_WINDOW_MS, LIMITS.rateLimitWindowMs),
   rateLimitMaxRequests: toPositiveInt(
@@ -24,4 +30,5 @@ export const ENV = {
   ),
   allowedHosts: parseAllowedHosts(process.env.ALLOWED_HOSTS),
   ytdlpPath: process.env.YTDLP_PATH?.trim() || "",
+  ffmpegPath: process.env.FFMPEG_PATH?.trim() || "",
 } as const;

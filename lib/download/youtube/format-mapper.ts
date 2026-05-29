@@ -7,20 +7,41 @@ const QUALITY_MAX_HEIGHT: Record<Exclude<VideoQuality, "source">, number> = {
   "360p": 360,
 };
 
+function heightFilter(quality: VideoQuality): string {
+  if (quality === "source") return "";
+  const maxHeight = QUALITY_MAX_HEIGHT[quality];
+  return `[height<=${maxHeight}]`;
+}
+
+/**
+ * yt-dlp format string for YouTube DASH (video+audio) with ffmpeg merge.
+ */
 export function buildYtdlpFormatSelector(quality: VideoQuality, format: VideoFormat): string {
   if (format === "mp3") {
     throw new Error("MP3 conversion for YouTube is not supported.");
   }
 
-  const height =
-    quality === "source" ? null : QUALITY_MAX_HEIGHT[quality as Exclude<VideoQuality, "source">];
-  const heightFilter = height ? `[height<=${height}]` : "";
+  const hf = heightFilter(quality);
 
   if (format === "webm") {
-    return `best${heightFilter}[ext=webm]/best${heightFilter}/best`;
+    return [
+      `bestvideo${hf}+bestaudio`,
+      `best${hf}[ext=webm]`,
+      `best${hf}`,
+      "best",
+    ].join("/");
   }
 
-  return `best${heightFilter}[ext=mp4]/best${heightFilter}/best`;
+  return [
+    `bestvideo${hf}+bestaudio`,
+    `best${hf}[ext=mp4]`,
+    `best${hf}`,
+    "best",
+  ].join("/");
+}
+
+export function getYtdlpMergeOutputFormat(format: VideoFormat): "mp4" | "webm" {
+  return format === "webm" ? "webm" : "mp4";
 }
 
 export function mapHeightsToQualities(heights: number[]): VideoQuality[] {

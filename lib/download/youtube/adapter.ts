@@ -1,8 +1,13 @@
 import type { Readable } from "node:stream";
 
-import { buildYtdlpFormatSelector, mapHeightsToQualities } from "@/lib/download/youtube/format-mapper";
+import {
+  buildYtdlpFormatSelector,
+  getYtdlpMergeOutputFormat,
+  mapHeightsToQualities,
+} from "@/lib/download/youtube/format-mapper";
+import { resolveFfmpegPath } from "@/lib/download/youtube/ffmpeg-path";
 import { normalizeYoutubeUrl } from "@/lib/download/youtube/normalize-url";
-import { createYtdlpStdoutStream, runYtdlpJson } from "@/lib/download/youtube/ytdlp-runner";
+import { createYtdlpMergedFileStream, runYtdlpJson } from "@/lib/download/youtube/ytdlp-runner";
 import { ENV } from "@/lib/utils/env";
 import type { VideoFormat, VideoQuality } from "@/types/video";
 
@@ -43,6 +48,37 @@ function collectAvailableFormats(formats: YtdlpFormat[]): VideoFormat[] {
   return Array.from(available);
 }
 
+function buildYtdlpDownloadArgs(
+  formatSelector: string,
+  mergeOutputFormat: "mp4" | "webm",
+  ffmpegPath: string | null,
+  containerFormat: VideoFormat
+): string[] {
+  const args = [
+    "-f",
+    formatSelector,
+    "--merge-output-format",
+    mergeOutputFormat,
+    "--no-playlist",
+    "--no-warnings",
+    "--no-part",
+  ];
+
+  if (containerFormat !== "webm") {
+    args.push("--audio-format", "aac");
+  }
+
+  if (!ffmpegPath) {
+    throw new Error(
+      "ffmpeg is required for YouTube downloads. Run npm install or set FFMPEG_PATH in .env.local."
+    );
+  }
+
+  args.push("--ffmpeg-location", ffmpegPath);
+
+  return args;
+}
+
 export async function getYoutubeVideoInfo(url: string) {
   const normalizedUrl = normalizeYoutubeUrl(url);
   const payload = await runYtdlpJson<YtdlpVideoJson>(
@@ -70,12 +106,23 @@ export async function getYoutubeVideoInfo(url: string) {
 export async function resolveYoutubeDownload(url: string, format: VideoFormat, quality: VideoQuality) {
   const normalizedUrl = normalizeYoutubeUrl(url);
   const formatSelector = buildYtdlpFormatSelector(quality, format);
-  const stream = await createYtdlpStdoutStream(
-    normalizedUrl,
-    ["-f", formatSelector, "-o", "-", "--no-playlist", "--no-warnings"],
-    ENV.requestTimeoutMs
+  const mergeOutputFormat = getYtdlpMergeOutputFormat(format);
+  const fileExtension: VideoFormat = format === "webm" ? "webm" : "mp4";
+  const ffmpegPath = await resolveFfmpegPath();
+
+  const optionArgs = buildYtdlpDownloadArgs(
+    formatSelector,
+    mergeOutputFormat,
+    ffmpegPath,
+    fileExtension
   );
 
-  const fileExtension: VideoFormat = format === "webm" ? "webm" : "mp4";
-  return { stream: stream as Readable, fileExtension };
+  const { stream, byteLength } = await createYtdlpMergedFileStream(
+    normalizedUrl,
+    optionArgs,
+    ENV.ytdlpDownloadTimeoutMs,
+    fileExtension
+  );
+
+  return { stream: stream as Readable, fileExtension, byteLength };
 }
