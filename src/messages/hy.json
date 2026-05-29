@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "Downloader — Արագ վիդեո ներբեռնիչ",
+    "description": "Ներբեռնեք վիդեո YouTube-ից և ուղիղ հղումներից։ Ընտրեք որակն ու ձևաչափը մեկ տեղում։"
+  },
   "layout": {
     "header": {
       "brand": "Downloader",

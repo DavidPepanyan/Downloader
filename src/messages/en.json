@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "Downloader — Fast video downloader",
+    "description": "Download videos from YouTube and direct links. Choose quality and format in one place."
+  },
   "layout": {
     "header": {
       "brand": "Downloader",

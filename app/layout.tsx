@@ -1,10 +1,20 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
+import { getSiteBaseUrl } from "@/lib/site/base-url";
 import "./globals.css";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(getSiteBaseUrl()),
+  icons: {
+    icon: "/photos/logo.ico",
+    shortcut: "/photos/logo.ico",
+  },
+};
 
 type RootLayoutProps = {
   children: ReactNode;
 };
-
 export default function RootLayout({ children }: RootLayoutProps) {
   const themeInitScript = `
     (function () {

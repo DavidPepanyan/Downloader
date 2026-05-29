@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { getSiteBaseUrl } from "@/lib/site/base-url";
 import { routing } from "@/src/i18n/routing";
 
 type LocaleLayoutProps = {
@@ -24,15 +25,29 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
     return {};
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const baseUrl = appUrl.replace(/\/$/, "");
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const baseUrl = getSiteBaseUrl();
+  const pageUrl = `${baseUrl}/${locale}`;
   const languages = Object.fromEntries(
     routing.locales.map((currentLocale) => [currentLocale, `${baseUrl}/${currentLocale}`])
   );
 
+  const title = t("title");
+  const description = t("description");
+
   return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      siteName: process.env.NEXT_PUBLIC_APP_NAME ?? "Downloader",
+      type: "website",
+      locale,
+    },
     alternates: {
-      canonical: `${baseUrl}/${locale}`,
+      canonical: pageUrl,
       languages,
     },
   };

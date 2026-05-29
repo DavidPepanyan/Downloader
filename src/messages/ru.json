@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "Downloader — Быстрый загрузчик видео",
+    "description": "Скачивайте видео с YouTube и по прямым ссылкам. Выбирайте качество и формат в одном месте."
+  },
   "layout": {
     "header": {
       "brand": "Downloader",
