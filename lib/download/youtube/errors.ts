@@ -1,4 +1,5 @@
 import type { ApiErrorCode } from "@/types/api";
+import { ENV } from "@/lib/utils/env";
 
 export class YtdlpError extends Error {
   readonly stderr: string;
@@ -61,6 +62,13 @@ export function mapYtdlpError(error: unknown): { code: ApiErrorCode; message: st
       code: "DOWNLOAD_FAILED",
       message:
         "Could not merge video and audio. Ensure ffmpeg is installed (npm install) and try again.",
+    };
+  }
+
+  if (text.includes("file_too_large") || text.includes("exceeds maximum size")) {
+    return {
+      code: "FILE_TOO_LARGE",
+      message: `File is too large. Maximum allowed size is ${ENV.maxVideoFileSizeMb} MB.`,
     };
   }
 

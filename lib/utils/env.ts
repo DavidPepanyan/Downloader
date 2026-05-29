@@ -15,6 +15,10 @@ function parseAllowedHosts(raw: string | undefined): string[] {
 }
 
 const requestTimeoutMs = toPositiveInt(process.env.REQUEST_TIMEOUT_MS, LIMITS.requestTimeoutMs);
+const maxVideoFileSizeMb = toPositiveInt(
+  process.env.MAX_VIDEO_FILE_SIZE_MB,
+  LIMITS.maxVideoFileSizeMb
+);
 
 export const ENV = {
   requestTimeoutMs,
@@ -23,6 +27,8 @@ export const ENV = {
     Math.max(requestTimeoutMs, 120_000)
   ),
   maxVideoDurationSec: toPositiveInt(process.env.MAX_VIDEO_DURATION_SEC, LIMITS.maxVideoDurationSec),
+  maxVideoFileSizeMb,
+  maxVideoFileSizeBytes: maxVideoFileSizeMb * 1024 * 1024,
   rateLimitWindowMs: toPositiveInt(process.env.RATE_LIMIT_WINDOW_MS, LIMITS.rateLimitWindowMs),
   rateLimitMaxRequests: toPositiveInt(
     process.env.RATE_LIMIT_MAX_REQUESTS,

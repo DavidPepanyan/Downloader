@@ -99,6 +99,7 @@
       "forbiddenHost": "This direct host is blocked by current security policy.",
       "unsupportedSource": "This source is unsupported. Use YouTube or a direct media URL.",
       "unsupportedFormat": "This format is not available for the selected media.",
+      "fileTooLarge": "This file is too large. Try a lower quality or a shorter video.",
       "downloadFailed": "We could not process this source right now. Please verify the link and try again.",
       "requestTimeout": "The request took too long. Please try again in a few moments.",
       "internalError": "Unexpected server error. Please try again later.",

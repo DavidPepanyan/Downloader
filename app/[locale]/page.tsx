@@ -76,6 +76,7 @@ export default function HomePage() {
       FORBIDDEN_HOST: t("errors.forbiddenHost"),
       UNSUPPORTED_SOURCE: t("errors.unsupportedSource"),
       UNSUPPORTED_FORMAT: t("errors.unsupportedFormat"),
+      FILE_TOO_LARGE: t("errors.fileTooLarge"),
       DOWNLOAD_FAILED: t("errors.downloadFailed"),
       REQUEST_TIMEOUT: t("errors.requestTimeout"),
       INTERNAL_ERROR: t("errors.internalError"),

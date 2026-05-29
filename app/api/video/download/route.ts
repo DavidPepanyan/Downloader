@@ -131,7 +131,14 @@ export async function POST(request: Request) {
 
     console.error("video/download youtube error:", error);
     const mapped = mapYtdlpError(error);
-    const status = mapped.code === "UNSUPPORTED_SOURCE" ? 422 : mapped.code === "INVALID_URL" ? 400 : 502;
+    const status =
+      mapped.code === "UNSUPPORTED_SOURCE" ||
+      mapped.code === "FILE_TOO_LARGE" ||
+      mapped.code === "UNSUPPORTED_FORMAT"
+        ? 422
+        : mapped.code === "INVALID_URL"
+          ? 400
+          : 502;
     return fail(mapped.code, mapped.message, status);
   }
 }

@@ -7,6 +7,7 @@ import { Readable } from "node:stream";
 import { RequestTimeoutError } from "@/lib/utils/errors";
 import { YtdlpError } from "@/lib/download/youtube/errors";
 import { ensureYtdlpBinary } from "@/lib/download/youtube/ytdlp-path";
+import { ENV } from "@/lib/utils/env";
 
 export type YtdlpMergedDownload = {
   stream: Readable;
@@ -198,6 +199,15 @@ export async function createYtdlpMergedFileStream(
     const { stderr } = await runYtdlpToDirectory(url, optionArgs, tempDir, timeoutMs);
 
     const filePath = await findMergedMediaFileWithRetry(tempDir, expectedExt);
+    const fileStat = await stat(filePath);
+
+    if (fileStat.size > ENV.maxVideoFileSizeBytes) {
+      throw new YtdlpError(
+        `FILE_TOO_LARGE: exceeds maximum size of ${ENV.maxVideoFileSizeMb} MB.`,
+        stderr
+      );
+    }
+
     const data = await readFile(filePath);
 
     if (data.byteLength === 0) {
