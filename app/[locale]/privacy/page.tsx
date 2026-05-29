@@ -13,6 +13,7 @@ export default async function PrivacyPolicyPage() {
       <p className="mt-6 max-w-3xl text-base leading-8 text-muted-foreground sm:text-lg">{t("p5")}</p>
       <p className="mt-6 max-w-3xl text-base leading-8 text-muted-foreground sm:text-lg">{t("p6")}</p>
       <p className="mt-6 max-w-3xl text-base leading-8 text-muted-foreground sm:text-lg">{t("p7")}</p>
+      <p className="mt-6 max-w-3xl text-base leading-8 text-muted-foreground sm:text-lg">{t("p8")}</p>
     </main>
   );
 }

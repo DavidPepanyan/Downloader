@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "setup:ytdlp": "node node_modules/@distube/yt-dlp/script/download.js"
+    "setup:ytdlp": "node node_modules/@distube/yt-dlp/script/download.js",
+    "e2e:video": "node scripts/e2e-video-check.mjs"
   },
   "dependencies": {
     "@distube/yt-dlp": "^2.0.1",

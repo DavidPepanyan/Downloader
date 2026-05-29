@@ -121,11 +121,12 @@
       "title": "Privacy Policy",
       "p1": "This service does not require registration and does not collect personal accounts or profiles.",
       "p2": "When you use the service, we may temporarily process the URL you submit in order to provide the requested functionality.",
-      "p3": "We may also process basic technical information such as IP address, browser type, and request logs for security and operational purposes.",
+      "p3": "We may process basic technical data—including your IP address, browser type, and request metadata—for security, abuse prevention, and reliable operation of the service.",
       "p4": "We do not sell, share, or use personal data for marketing purposes.",
       "p5": "Temporary processing files may be automatically deleted after completion.",
       "p6": "We do not permanently store user-submitted content or download history.",
-      "p7": "You are responsible for ensuring that any content you process complies with applicable laws and rights of third parties."
+      "p7": "You are responsible for ensuring that any content you process complies with applicable laws and rights of third parties.",
+      "p8": "To prevent abuse, we use your IP address for rate limiting (for example, limiting how many download requests can be made within a short time window). This information is used only for security and service stability, not for advertising or building user profiles. Rate-limit records are kept for a short period (typically up to 60 minutes) and are not linked to a permanent account, because the service does not require registration."
     },
     "dmca": {
       "title": "Copyright & DMCA Policy",
